@@ -1,0 +1,3 @@
+[submodule "use-spotify-web-playback-sdk"]
+	path = use-spotify-web-playback-sdk
+	url = https://github.com/Leopc1977/use-spotify-web-playback-sdk.git
