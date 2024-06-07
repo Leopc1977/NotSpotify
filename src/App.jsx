@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import Spotify from './components/Spotify';
 
 const App = () => {
-  const [accessToken, setAccessToken] = useState(null);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('access_token');
 
-    setAccessToken(token);
+    setToken(params.get('access_token'));
   }, []);
 
   const handleLogin = () => {
@@ -17,9 +16,11 @@ const App = () => {
 
   return (
       <div>
-        {accessToken !== null && accessToken !== undefined ? (
+        {token !== null && token !== undefined ? (
           <Spotify 
-            accessToken={accessToken}
+            token={token}
+            clientId={import.meta.env.VITE_SPOTIFY_CLIENT_ID}
+            clientSecret={import.meta.env.VITE_SPOTIFY_CLIENT_SECRET}
           />
         ) : (
           <>

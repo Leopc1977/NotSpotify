@@ -1,20 +1,15 @@
 import React, { useEffect } from 'react';
-// import useSpotifyWebPlaybackSdk  from '../hooks/useSpotifyWebPlaybackSdk';
 import useSpotifyWebPlaybackSdk from 'use-spotify-web-playback-sdk';
+import useSpotifyApi from 'use-spotify-api-sdk';
 
 function Spotify(props) {
-  const { accessToken } = props;
+  const { token, clientId, clientSecret } = props;
 
-  const {
-    player,
-    deviceId,
-    isReady,
-  } = useSpotifyWebPlaybackSdk({
+  const [spotifyApi] = useSpotifyApi(clientId, clientSecret);
+
+  const [player, deviceId, isReady] = useSpotifyWebPlaybackSdk({
     name: "NotSpotify Player", 
-    getOAuthToken: () => accessToken, 
-    onPlayerStateChanged: (playerState) => {
-      console.log('player state changed:', playerState);
-    }
+    getOAuthToken: () => token, 
   });
 
   return (

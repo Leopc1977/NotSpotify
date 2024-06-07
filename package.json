@@ -20,6 +20,7 @@
     "querystring": "^0.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "use-spotify-api-sdk": "file:use-spotify-api-sdk",
     "use-spotify-web-playback-sdk": "file:use-spotify-web-playback-sdk"
   },
   "devDependencies": {
