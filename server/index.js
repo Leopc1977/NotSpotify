@@ -29,9 +29,25 @@ var generateRandomString = function (length) {
 
 // Endpoint to initiate Spotify login
 app.get('/login', (req, res) => {
-  var scope = "streaming \
-  user-read-email \
-  user-read-private"
+  var scope = `
+    user-read-private
+    user-read-email
+    user-read-playback-state
+    user-modify-playback-state
+    user-read-currently-playing
+    streaming
+    app-remote-control
+    playlist-read-collaborative
+    playlist-modify-public
+    playlist-read-private
+    playlist-modify-private
+    user-library-modify
+    user-library-read
+    user-top-read
+    user-read-recently-played
+    user-follow-read
+    user-follow-modify
+  `.replace(/\s+/g, ' ').trim();
 
   var state = generateRandomString(16);
 
@@ -63,9 +79,10 @@ app.get('/callback', async (req, res) => {
       },
     });
 
-    const { access_token, refresh_token } = response.data;
+    const { access_token, refresh_token, token_type, expires_in, scope } = response.data;
 
-    res.redirect(`http://localhost:3000?access_token=${access_token}&refresh_token=${refresh_token}`);
+    res.redirect(`http://localhost:3000?access_token=${access_token}&refresh_token=${refresh_token}&token_type=${token_type}&expires_in=${expires_in}&scope=${scope}`);
+    
   } catch (error) {
     console.error(error);
     res.status(500).send('Something went wrong!');

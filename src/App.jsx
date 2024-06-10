@@ -1,39 +1,14 @@
-import { useEffect, useState } from 'react';
-import Spotify from './components/Spotify';
+import { StoreProvider } from 'mobx-utils'
+import AppSpotify from './AppSpotify';
+import Store from './store/store';
 
 const App = () => {
-  const [token, setToken] = useState(null);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-
-    setToken(params.get('access_token'));
-  }, []);
-
-  const handleLogin = () => {
-    window.location.href = 'http://localhost:3001/login';
-  };
+  const store = new Store();
 
   return (
-      <div>
-        {token !== null && token !== undefined ? (
-          <Spotify 
-            token={token}
-            clientId={import.meta.env.VITE_SPOTIFY_CLIENT_ID}
-            clientSecret={import.meta.env.VITE_SPOTIFY_CLIENT_SECRET}
-          />
-        ) : (
-          <>
-            <p>Not connected</p>
-            <button 
-              onClick={handleLogin}
-            >
-              Connect to Spotify
-            </button>
-          </>
-        )}
-
-      </div>
+    <StoreProvider store={store}>
+        <AppSpotify />
+    </StoreProvider>
   );
 };
 
