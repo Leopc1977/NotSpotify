@@ -1,19 +1,22 @@
-import { makeAutoObservable } from 'mobx';
-import AuthData from './authData/AuthData';
-import Playback from './playback/Playback';
-import Api from './api/Api';
-import App from './app/app';
+import { makeAutoObservable } from "mobx";
+import App from "./app/app";
+import Api from "./api/api";
 
 class Store {
-    
-    constructor() {
-        this.authData = new AuthData(this);
-        this.playback = new Playback(this);
-        this.api = new Api(this);
-        this.app = new App(this);
+  player = null;
 
-        makeAutoObservable(this, {}, { autoBind: true })
-    }
+  constructor() {
+    this.app = new App(this);
+    this.api = new Api(this);
+
+    this.spotifyLayer = null;
+
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
+
+  setSpotifyLayer(spotifyLayer) {
+    this.spotifyLayer = spotifyLayer;
+  }
 }
 
 export default Store;

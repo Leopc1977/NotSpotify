@@ -1,15 +1,19 @@
 import { makeAutoObservable } from "mobx";
 
 class Api {
-  spotifyApiSdk = null;
+  state = null;
+  likedTracks = [];
 
   constructor(store) {
-    this.store = store;
-    makeAutoObservable(this, {}, { autoBind: true })
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
-  intializeApi = (spotifyApiSdk) => {
-    this.spotifyApiSdk = spotifyApiSdk;
+  setState(state) {
+    this.state = state;
+  }
+
+  addLikedTracks(tracks) {
+    this.likedTracks.push(...tracks);
   }
 }
 

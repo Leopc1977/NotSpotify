@@ -1,70 +1,68 @@
-import React, { useEffect } from 'react';
-import useSpotifyWebPlaybackSdk from 'use-spotify-web-playback-sdk';
-import useSpotifyApi from 'use-spotify-api-sdk';
-import { useStore } from 'mobx-utils';
-import { observer } from 'mobx-react-lite';
-import styled from 'styled-components';
-import SideBar from './SideBar';
-import Core from './Core';
+import React, { useEffect } from "react";
+import { observer } from "mobx-react-lite";
+import styled from "styled-components";
+import SideBar from "./SideBar";
+import Core from "./Core";
+import PlayBack from "./PlayBack";
+import { useStore } from "mobx-utils";
+import Header from "./Header";
+import { getMyLikedTracks } from "spotify-layer";
 
 const ContainerStyled = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
-`
+  flex-direction: column;
+  background-color: black;
+`;
+
+const MainScreen = styled.div`
+  width: 100%;
+  display: flex;
+  height: calc(100% - 50px - 50px);
+`;
+
+const PlayBackContainer = styled.div`
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  height: 50px;
+`;
 
 function NotSpotify() {
-  const { authData } = useStore();
-  const {intializeApi} = useStore().api;
-  const {intializePlayback} = useStore().playback;
-
-  // Get the Spotify API SDK and the Spotify Web Playback SDK
-  const [spotifyApiSdk] = useSpotifyApi(authData);
-
-  const [player, deviceId, isReady] = useSpotifyWebPlaybackSdk({
-    playerName: "NotSpotify Player", 
-    getOAuthToken: () => authData.access_token, 
-  });
-
-  useEffect(() => { 
-    intializeApi(spotifyApiSdk);
-    intializePlayback([player, deviceId, isReady]);
-  }, [spotifyApiSdk, player, deviceId, isReady]);
-
+  const { spotifyLayer } = useStore();
+  const { sideBarState, setSideBarState } = useStore().app;
+  const { addLikedTracks } = useStore().api;
   useEffect(() => {
-    // Test for spotifyApiSdk
-    async function fetchArtists() {
-      const items = await spotifyApiSdk.search("The Beatles", ["artist"]);
-
-      console.table(items.artists.items.map((item) => ({
-          name: item.name,
-          followers: item.followers.total,
-          popularity: item.popularity,
-      })));
+    function updateLikedTracks(tracks) {
+      addLikedTracks(tracks);
+    }
+    async function fetchLikedTracks() {
+      if (!spotifyLayer) return;
+      getMyLikedTracks(spotifyLayer.api, updateLikedTracks);
     }
 
-    async function fetchProfile() {
-      const profile = await spotifyApiSdk.currentUser;
-      console.log(profile);
-    }
+    fetchLikedTracks();
+  }, []);
 
-    async function fetchTopTracks() {
-      const tracks = await spotifyApiSdk.currentUser.topItems("tracks");
-      console.log(tracks);
+  const handleMouseMove = (e) => {
+    let newSideBarState = sideBarState === "fixed" ? "fixed" : "closed";
+    if (sideBarState !== "fixed" && e.clientX < window.innerWidth * 0.15) {
+      newSideBarState = "floating";
     }
-
-    if (spotifyApiSdk !== null) {
-      // fetchArtists();
-      // fetchProfile();
-      // fetchTopTracks();
-    }
-
-  }, [spotifyApiSdk]);
+    setSideBarState(newSideBarState);
+  };
 
   return (
-    <ContainerStyled>
-      <SideBar />
-      <Core />
+    <ContainerStyled onMouseMove={handleMouseMove}>
+      <Header />
+      <MainScreen>
+        <SideBar />
+        <Core />
+      </MainScreen>
+      <PlayBackContainer>
+        <PlayBack />
+      </PlayBackContainer>
     </ContainerStyled>
   );
 }
