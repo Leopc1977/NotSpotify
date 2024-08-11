@@ -4,11 +4,16 @@ import { useStore } from "mobx-utils";
 import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import Song from "../ui/Song";
+import PlaylistHeader from "../ui/PlaylistHeader";
 
 const Container = styled.div`
   height: 100%;
   width: 100%;
 `;
+
+const TitleStyled = styled.div``;
+
+const PlaylistList = styled.ul``;
 
 function Playlist() {
   const { spotifyLayer } = useStore();
@@ -34,34 +39,32 @@ function Playlist() {
     getPlaylistTracks();
   }, [currentPage.data.id]);
 
+  const handleClickOnSong = (track) => {
+    spotifyLayer.api.player.startResumePlayback(
+      spotifyLayer.deviceId,
+      undefined,
+      [track.uri],
+    );
+  };
+
   return (
     <Container>
-      <h1>Playlist {currentPage.name}</h1>
-      <h1>Owner: {currentPage.data.owner.display_name}</h1>
-      <h1> Description: {currentPage.data.description}</h1>
-      <img src={currentPage.data.images[0]?.url} alt={currentPage.name} />
-      <h1>Tracks:</h1>
-      <ul>
+      <PlaylistHeader playlist={currentPage.data} />
+      <TitleStyled>Tracks:</TitleStyled>
+      <PlaylistList>
         {(currentPage.data.id === "liked-tracks"
           ? likedTracks
           : playlistTracks
         ).map((track) => {
           return (
             <Song
-              key={`${track.track.id}-${track.added_at}`}
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                spotifyLayer.api.player.startResumePlayback(
-                  spotifyLayer.deviceId,
-                  undefined,
-                  [track.track.uri],
-                );
-              }}
+              key={`${currentPage.data.id}-${track.track.id}-${track.added_at}`}
+              onClick={() => handleClickOnSong(track.track)}
               track={track.track}
             />
           );
         })}
-      </ul>
+      </PlaylistList>
     </Container>
   );
 }

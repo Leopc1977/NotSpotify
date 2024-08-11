@@ -4,11 +4,16 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import formatDuration from "../../utils/formatDuration";
 import Song from "../ui/Song";
+import ArtistHeader from "../ui/ArtistHeader";
 
 const Container = styled.div`
   height: 100%;
   width: 100%;
 `;
+
+const TitleStyled = styled.div``;
+
+const TracksList = styled.ul``;
 
 function Artist() {
   const { currentPage } = useStore().app;
@@ -27,31 +32,29 @@ function Artist() {
     getArtistTracks();
   }, [currentPage.data.id]);
 
+  const handleClickOnSong = (track) => {
+    spotifyLayer.api.player.startResumePlayback(
+      spotifyLayer.deviceId,
+      undefined,
+      [track.uri],
+    );
+  };
+
   return (
     <Container>
-      <h1>Artist {currentPage.name}</h1>
-      <h1>Followers: {currentPage.data.followers.total}</h1>
-      <h1>Genre: {currentPage.data.genres.map((genre) => genre).join(", ")}</h1>
-      <img src={currentPage.data.images[2]?.url} alt={currentPage.name} />
-      <h1>Top Tracks:</h1>
-      <ul>
+      <ArtistHeader artist={currentPage.data} />
+      <TitleStyled>Top Tracks:</TitleStyled>
+      <TracksList>
         {artistTracks.map((track) => {
           return (
             <Song
               key={track.id}
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                spotifyLayer.api.player.startResumePlayback(
-                  spotifyLayer.deviceId,
-                  undefined,
-                  [track.uri],
-                );
-              }}
+              onClick={() => handleClickOnSong(track)}
               track={track}
             />
           );
         })}
-      </ul>
+      </TracksList>
     </Container>
   );
 }

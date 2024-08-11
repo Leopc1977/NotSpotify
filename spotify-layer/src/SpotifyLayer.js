@@ -29,60 +29,57 @@ class SpotifyLayer {
         scriptTag.src = "https://sdk.scdn.co/spotify-player.js";
         document.body.appendChild(scriptTag);
 
-        scriptTag.onload = () => this.setupPlayer(data, resolve, reject);
-        scriptTag.onerror = () =>
-          reject(new Error("Spotify SDK script failed to load"));
-      } else {
-        this.setupPlayer(data, resolve, reject);
-      }
+        window.onSpotifyWebPlaybackSDKReady = () => {
+          this.player = new Spotify.Player({
+            name: data.playerName,
+            getOAuthToken: (cb) => cb(data.accessToken),
+            volume: 0.5,
+          });
+          this.setupPlayer(data, resolve, reject);
+        };
+      } else this.setupPlayer(data, resolve, reject);
     });
   }
 
   setupPlayer(data, resolve, reject) {
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      this.player = new Spotify.Player({
-        name: data.playerName,
-        getOAuthToken: (cb) => cb(data.accessToken),
-        volume: 0.5,
-      });
+    console.log("Setting up player");
 
-      if (!this.player) {
-        console.error("Spotify player is not initialized.");
-        reject(new Error("Spotify player is not initialized."));
-        return;
-      }
+    if (!this.player) {
+      console.error("Spotify player is not initialized.");
+      reject(new Error("Spotify player is not initialized."));
+      return;
+    }
 
-      this.player.addListener("initialization_error", ({ message }) =>
-        reject(new Error("Initialization Error: " + message)),
-      );
-      this.player.addListener("authentication_error", ({ message }) =>
-        reject(new Error("Authentication Error: " + message)),
-      );
-      this.player.addListener("account_error", ({ message }) =>
-        reject(new Error("Account Error: " + message)),
-      );
-      this.player.addListener("playback_error", ({ message }) =>
-        reject(new Error("Playback Error: " + message)),
-      );
+    this.player.addListener("initialization_error", ({ message }) =>
+      reject(new Error("Initialization Error: " + message)),
+    );
+    this.player.addListener("authentication_error", ({ message }) =>
+      reject(new Error("Authentication Error: " + message)),
+    );
+    this.player.addListener("account_error", ({ message }) =>
+      reject(new Error("Account Error: " + message)),
+    );
+    this.player.addListener("playback_error", ({ message }) =>
+      reject(new Error("Playback Error: " + message)),
+    );
 
-      this.player.addListener("ready", ({ device_id }) => {
-        console.log("Ready with Device ID:", device_id);
-        this.deviceId = device_id;
-        resolve();
-      });
+    this.player.addListener("ready", ({ device_id }) => {
+      console.log("Ready with Device ID:", device_id);
+      this.deviceId = device_id;
+      resolve();
+    });
 
-      this.player.addListener("not_ready", ({ device_id }) => {
-        console.log("Device ID has gone offline:", device_id);
-      });
+    this.player.addListener("not_ready", ({ device_id }) => {
+      console.log("Device ID has gone offline:", device_id);
+    });
 
-      this.player.addListener("player_state_changed", (state) => {
-        console.log("Player state changed:", state);
-        data.onPlayerStateChanged(state);
-      });
+    this.player.addListener("player_state_changed", (state) => {
+      console.log("Player state changed:", state);
+      data.onPlayerStateChanged(state);
+    });
 
-      this.player.connect();
-      console.log("Player initialized");
-    };
+    this.player.connect();
+    console.log("Player initialized");
   }
 
   async initializeApi(data) {

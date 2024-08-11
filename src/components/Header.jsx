@@ -2,9 +2,44 @@ import { useStore } from "mobx-utils";
 import MenuSvg from "../assets/menu.svg?react";
 import styled from "styled-components";
 import { useState } from "react";
+import { HEADER_HEIGHT } from "../config/config";
+
+const Container = styled.div`
+  position: fixed;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: ${HEADER_HEIGHT}px;
+  width: 100%;
+  background-color: black;
+  color: white;
+  overscroll-behavior-y: contain;
+  z-index: 1;
+`;
 
 const MenuStyled = styled.div`
   cursor: pointer;
+`;
+
+const Logo = styled.div`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+`;
+
+const TitleStyled = styled.h1``;
+const Decorator = styled.p``;
+
+const MenuSvgStyled = styled(MenuSvg)`
+  position: absolute;
+  left: 10px;
+  width: 30px;
+  height: 30px;
+  fill: white;
+  top: 10px;
+  transition: transform 0.2s ease;
+  transform: ${(props) => (props.isShrunk ? "scale(0.8)" : "scale(1)")};
 `;
 
 function Header() {
@@ -22,59 +57,36 @@ function Header() {
         ? "fixed"
         : "closed",
     );
-    console.log(
-      sideBarState,
-      "=>",
-      sideBarState === "closed" || sideBarState === "floating"
-        ? "fixed"
-        : "closed",
-    );
+  };
+
+  const handleClickOnMenuIcon = () => {
+    toggleSideBarState();
+    toggleShrink();
+  };
+
+  const handleMouseMoveOnMenuIcon = (e) => {
+    e.stopPropagation();
+  };
+
+  const handleClickOnLogo = () => {
+    setCurrentPage({ type: "home", data: {} });
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "50px",
-        backgroundColor: "black",
-        color: "white",
-        borderBottom: "2px solid white",
-      }}
-    >
+    <Container>
       <MenuStyled>
-        <MenuSvg
-          style={{
-            position: "absolute",
-            left: 10,
-            width: 30,
-            height: 30,
-            fill: "white",
-            top: 10,
-            transition: "transform 0.2s ease", // Smooth transition for transform
-            transform: isShrunk ? "scale(0.8)" : "scale(1)", // Conditional scaling
-          }}
-          onClick={(e) => {
-            toggleSideBarState();
-            toggleShrink();
-          }}
-          onMouseMove={(e) => {
-            e.stopPropagation();
-          }}
+        <MenuSvgStyled
+          onClick={handleClickOnMenuIcon}
+          onMouseMove={handleMouseMoveOnMenuIcon}
+          isShrunk={isShrunk}
         />
       </MenuStyled>
-      <div
-        style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
-        onClick={() => {
-          setCurrentPage({ type: "home", data: {} });
-        }}
-      >
-        <p>|||</p>
-        <h1>SpotifyLayer</h1>
-        <p>|||</p>
-      </div>
-    </div>
+      <Logo onClick={handleClickOnLogo}>
+        <Decorator>|||</Decorator>
+        <TitleStyled>SpotifyLayer</TitleStyled>
+        <Decorator>|||</Decorator>
+      </Logo>
+    </Container>
   );
 }
 

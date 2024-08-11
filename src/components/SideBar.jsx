@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { getMyLibrary } from "spotify-layer";
 import { createPortal } from "react-dom";
+import {
+  HEADER_HEIGHT,
+  HOVER_CONTENT_COLOR,
+  PLAYBACK_HEIGHT,
+  PRIMARY_TEXT_COLOR,
+  SECONDARY_BACKGROUND_COLOR,
+} from "../config/config";
 
 const Container = styled.div`
   position: absolute;
@@ -12,16 +19,77 @@ const Container = styled.div`
       ? "0px"
       : "-100%"};
   transition: all 0.2s ease;
-  top: calc(50px + 2px);
-  background-color: black;
-  border-right: 2px solid white;
+  top: ${HEADER_HEIGHT}px;
+  color: ${PRIMARY_TEXT_COLOR};
 
   width: 20%;
-  height: calc(100vh - 50px - 50px);
-  overflow: scroll;
+  height: calc(100vh - ${HEADER_HEIGHT + PLAYBACK_HEIGHT + 2}px);
+  overflow: hidden;
+  overflow-y: scroll;
+  overscroll-behavior-y: none;
 
-  color: white;
-  border-left: 2px solid white;
+  border: 1px solid white;
+  border-radius: ${(props) =>
+    props.sideBarState === "floating" ? "10px" : "5px"};
+  gap: 10px;
+  background-color: ${SECONDARY_BACKGROUND_COLOR};
+`;
+
+const ContentContainer = styled.div`
+  color: ${PRIMARY_TEXT_COLOR};
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+
+  h2 {
+    cursor: pointer;
+    border-bottom: 1px solid white;
+  }
+
+  h3 {
+    margin: 10px 0;
+  }
+
+  div {
+    cursor: pointer;
+  }
+
+  div:hover {
+    background-color: ${HOVER_CONTENT_COLOR};
+    border-radius: 5px;
+  }
+`;
+
+const ContentRenderer = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  width: 90%;
+  height: 35px;
+  border-radius: 5px;
+  overflow: hidden;
+`;
+
+const Line = styled.div`
+  cursor: pointer;
+  border-bottom: 1px solid white;
+`;
+
+const LibraryTitle = styled.div``;
+
+const LibrarySong = styled.div``;
+
+const Image = styled.img`
+  width: 50px;
+  height: 50px;
+`;
+
+const ContentName = styled.div`
+  white-space: nowrap;
+  text-overflow: ellipsis;
 `;
 
 function SideBar() {
@@ -68,39 +136,10 @@ function SideBar() {
     }
 
     return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          padding: 10,
-          cursor: "pointer",
-          gap: 10,
-          width: "100%",
-          border: "1px solid white",
-        }}
-      >
-        {imageUrl && (
-          <img
-            src={imageUrl}
-            alt={name}
-            style={{
-              width: 50,
-              height: 50,
-            }}
-          />
-        )}
-        <div>
-          <div
-            style={{
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {name}
-          </div>
-          <div>{caption}</div>
-        </div>
-      </div>
+      <ContentRenderer>
+        {imageUrl && <Image src={imageUrl} alt={name} />}
+        <ContentName>{name}</ContentName>
+      </ContentRenderer>
     );
   };
 
@@ -108,45 +147,40 @@ function SideBar() {
     e.stopPropagation();
   };
 
+  const handlePointerDownOnHome = () => {
+    setCurrentPage({ type: "home", data: {} });
+  };
+
+  const handlePointerDownOnSearch = () => {
+    setCurrentPage({ type: "search", data: {} });
+  };
+
+  const handlePointerDownOnStats = () => {
+    setCurrentPage({ type: "stats", data: {} });
+  };
+
+  const handlePointerDownOnLibraryTrack = (content) => {
+    setCurrentPage(content);
+  };
+
   return createPortal(
     <Container onMouseMove={handleMouseMove} sideBarState={sideBarState}>
-      <h2
-        style={{
-          cursor: "pointer",
-          borderBottom: "1px solid white",
-        }}
-        onPointerDown={() => {
-          setCurrentPage({ type: "search", data: {} });
-        }}
-      >
-        Search 🔎
-      </h2>
-      <h2
-        style={{
-          cursor: "pointer",
-          borderBottom: "1px solid white",
-        }}
-        onPointerDown={() => {
-          setCurrentPage({ type: "stats", data: {} });
-        }}
-      >
-        Stats 📊
-      </h2>
-      <h3>Your Library 📚</h3>
-      <div>
+      <Line onPointerDown={handlePointerDownOnHome}>Home 🔎</Line>
+      <Line onPointerDown={handlePointerDownOnSearch}>Search 🔎</Line>
+      <Line onPointerDown={handlePointerDownOnStats}>Stats 📊</Line>
+      <LibraryTitle>Your Library 📚</LibraryTitle>
+      <ContentContainer>
         {[likedTracksContent, ...libraryContent].map((content) => {
           return (
-            <div
-              key={content.data.id}
-              onPointerDown={() => {
-                setCurrentPage(content);
-              }}
+            <LibrarySong
+              key={`Sidebar-${content.data.id}`}
+              onPointerDown={() => handlePointerDownOnLibraryTrack(content)}
             >
               {contentRenderer(content)}
-            </div>
+            </LibrarySong>
           );
         })}
-      </div>
+      </ContentContainer>
     </Container>,
     document.body,
   );

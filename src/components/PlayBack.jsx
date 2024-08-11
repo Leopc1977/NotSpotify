@@ -2,97 +2,82 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "mobx-utils";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { SECONDARY_BACKGROUND_COLOR } from "../config/config";
 
 const PlayBackStyled = styled.div`
-  background-color: black;
-  width: 100%;
-  height: 100%;
-  display: flex;
   color: white;
-  border-top: 2px solid white;
-  padding: 10px;
-  justify-content: space-between;
-  align-items: center;
+  overscroll-behavior-y: contain;
+  height: 50px;
+  background-color: ${SECONDARY_BACKGROUND_COLOR};
 `;
 
-const Player = styled.div``;
+const Content = styled.div`
+  display: flex;
+  justifycontent: space-between;
+`;
+
+const Player = styled.div`
+  width: 50%;
+  height: 100%;
+  justifycontent: center;
+`;
+
+const PlayingTrack = styled.div`
+  display: flex;
+  justifycontent: center;
+  alignitems: center;
+  height: 100%;
+`;
 
 const Button = styled.button`
   background-color: black;
   color: white;
-  border: 1px solid white;
   border-radius: 5px;
-  padding: 5px;
   cursor: pointer;
+  border: 1px solid white;
+`;
+
+const Controls = styled.div`
+  display: flex;
+  justifycontent: space-between;
+  width: 50%;
+  height: 100%;
 `;
 
 function PlayBack() {
   const { spotifyLayer } = useStore();
   const { state } = useStore().api;
 
+  const currentTrack = state?.track_window?.current_track?.name
+    ? `${state.track_window.current_track.name} - ${state.track_window.current_track.artists[0].name}`
+    : state?.item?.name
+      ? `${state.item.name} - ${state.item.artists[0].name}`
+      : "No track playing";
+
+  const handleClickOnPrevious = () => {
+    spotifyLayer.player.previousTrack();
+  };
+
+  const handleClickOnPlay = () => {
+    spotifyLayer.player.togglePlay();
+  };
+
+  const handleClickOnNext = () => {
+    spotifyLayer.player.nextTrack();
+  };
+
   return (
     <PlayBackStyled>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          width: "100%",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-            width: "50%",
-          }}
-        >
-          <p>
-            {state?.track_window?.current_track?.name
-              ? `${state.track_window.current_track.name} - ${state.track_window.current_track.artists[0].name}`
-              : state?.item?.name
-                ? `${state.item.name} - ${state.item.artists[0].name}`
-                : "No track playing"}
-          </p>
-        </div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            width: "50%",
-          }}
-        >
-          <div>
-            <Button
-              onClick={() => {
-                spotifyLayer.player.previousTrack();
-              }}
-            >
-              Previous
-            </Button>
-            <Button
-              onClick={() => {
-                spotifyLayer.player.togglePlay();
-              }}
-            >
-              Play
-            </Button>
-            <Button
-              onClick={() => {
-                spotifyLayer.player.nextTrack();
-              }}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-        <div>
-          <div>
-            <p></p>
-          </div>
-        </div>
-      </div>
+      <Content>
+        <Player>
+          <PlayingTrack>{currentTrack}</PlayingTrack>
+        </Player>
+        <Controls>
+          <Button onClick={handleClickOnPrevious}>Previous</Button>
+          <Button onClick={handleClickOnPlay}>Play</Button>
+          <Button onClick={handleClickOnNext}>Next</Button>
+        </Controls>
+      </Content>
     </PlayBackStyled>
   );
 }

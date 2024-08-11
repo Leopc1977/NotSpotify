@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
 
+import styled from "styled-components";
+
+const TitleStyled = styled.div``;
+
 function Home() {
-  return (
-    <div>
-      <h1>Home</h1>
-    </div>
-  );
+  return <TitleStyled>Home</TitleStyled>;
 }
 
 export default observer(Home);

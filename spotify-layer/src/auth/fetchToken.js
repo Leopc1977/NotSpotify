@@ -16,7 +16,6 @@ function fetchToken(code, data) {
   })
     .then((response) => response.json())
     .then((json) => {
-      console.log(json);
       window.location.href = `http://localhost:3000?access_token=${json.access_token}&refresh_token=${json.refresh_token}&token_type=${json.token_type}&expires_in=${json.expires_in}&scope=${json.scope}`;
     });
 }

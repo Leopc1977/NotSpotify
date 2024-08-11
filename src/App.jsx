@@ -4,6 +4,8 @@ import Store from "./store/store";
 import { StyleSheetManager } from "styled-components";
 import isPropValid from "@emotion/is-prop-valid";
 
+import "./App.css";
+
 const App = () => {
   const store = new Store();
 

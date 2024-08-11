@@ -3,24 +3,30 @@ import { useStore } from "mobx-utils";
 import NotSpotify from "./components/NotSpotify";
 import { observer } from "mobx-react-lite";
 import styled from "styled-components";
-import SpotifyLayer, {
-  authenticateOAuth,
-  fetchToken,
-  getMyLikedTracks,
-} from "spotify-layer";
+import SpotifyLayer, { authenticateOAuth, fetchToken } from "spotify-layer";
 
 const Container = styled.div`
-  position: absolute;
+  margin: 0;
   top: 0;
   left: 0;
-  bottom: 0;
-  right: 0;
+  height: 100vh;
   width: 100%;
-  height: 100%;
+  overflow: auto;
+  overscroll-behavior-y: none;
+`;
+
+const NotConnectedContainerStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: black;
+  color: white;
 `;
 
 function AppSpotify() {
-  const { spotifyLayer, setSpotifyLayer } = useStore();
+  const { setSpotifyLayer } = useStore();
   const { setIsReady, isReady } = useStore().app;
   const { setState } = useStore().api;
 
@@ -36,6 +42,7 @@ function AppSpotify() {
         });
       }
     }
+
     async function getToken() {
       if (params.has("access_token")) {
         const newSpotifyLayer = new SpotifyLayer({
@@ -57,8 +64,6 @@ function AppSpotify() {
         setSpotifyLayer(newSpotifyLayer);
         const newState = await newSpotifyLayer.api.player.getPlaybackState();
         setState(newState);
-
-        console.log("newState", newState);
       }
     }
 
@@ -78,10 +83,11 @@ function AppSpotify() {
       {isReady ? (
         <NotSpotify />
       ) : (
-        <>
-          <p>Not connected</p>
-          <button onClick={handleLogin}>Connect to NotSpotify</button>
-        </>
+        <NotConnectedContainerStyled>
+          <h1>NotSpotify</h1>
+          <img src="./logImage.webp" alt="logo" />
+          <button onClick={handleLogin}>Log to NotSpotify</button>
+        </NotConnectedContainerStyled>
       )}
     </Container>
   );

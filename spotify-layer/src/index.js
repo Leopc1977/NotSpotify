@@ -10,5 +10,5 @@ import getMyLikedTracks from "./api/getMyLikedTracks";
 import getMyLibrary from "./api/getMyLibrary";
 
 /* Export */
-export { authenticateOAuth, fetchToken, getMyLikedTracks, getMyLibrary };
 export default SpotifyLayer;
+export { authenticateOAuth, fetchToken, getMyLikedTracks, getMyLibrary };

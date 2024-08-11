@@ -7,47 +7,53 @@ import PlayBack from "./PlayBack";
 import { useStore } from "mobx-utils";
 import Header from "./Header";
 import { getMyLikedTracks } from "spotify-layer";
+import {
+  PLAYBACK_HEIGHT,
+  PRIMARY_BACKGROUND_COLOR,
+  SECONDARY_BACKGROUND_COLOR,
+} from "../config/config";
 
 const ContainerStyled = styled.div`
+  height: 100vh;
   width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  background-color: black;
+  background-color: ${PRIMARY_BACKGROUND_COLOR};
+  overscroll-behavior: none; /* Apply both x and y */
 `;
 
 const MainScreen = styled.div`
   width: 100%;
+  background-color: #0f
   display: flex;
-  height: calc(100% - 50px - 50px);
+  justify-content: center;
+  align-items: center;
 `;
 
 const PlayBackContainer = styled.div`
-  position: absolute;
+  position: fixed;
   width: 100%;
+  height: ${PLAYBACK_HEIGHT}px;
+  border-top: 1px solid white;
   bottom: 0;
-  height: 50px;
 `;
 
 function NotSpotify() {
   const { spotifyLayer } = useStore();
   const { sideBarState, setSideBarState } = useStore().app;
   const { addLikedTracks } = useStore().api;
+
   useEffect(() => {
-    function updateLikedTracks(tracks) {
-      addLikedTracks(tracks);
-    }
     async function fetchLikedTracks() {
       if (!spotifyLayer) return;
-      getMyLikedTracks(spotifyLayer.api, updateLikedTracks);
+      const tracks = await getMyLikedTracks(spotifyLayer.api);
+      addLikedTracks(tracks);
     }
 
     fetchLikedTracks();
-  }, []);
+  }, [spotifyLayer, addLikedTracks]);
 
   const handleMouseMove = (e) => {
     let newSideBarState = sideBarState === "fixed" ? "fixed" : "closed";
-    if (sideBarState !== "fixed" && e.clientX < window.innerWidth * 0.15) {
+    if (sideBarState !== "fixed" && e.clientX < window.innerWidth * 0.05) {
       newSideBarState = "floating";
     }
     setSideBarState(newSideBarState);

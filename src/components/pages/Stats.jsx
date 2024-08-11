@@ -1,9 +1,9 @@
+import styled from "styled-components";
+
+const TitleStyled = styled.div``;
+
 function Stats() {
-  return (
-    <div>
-      <h1>Stats</h1>
-    </div>
-  );
+  return <TitleStyled>Stats</TitleStyled>;
 }
 
 export default Stats;

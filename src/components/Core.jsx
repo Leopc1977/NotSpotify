@@ -11,13 +11,27 @@ import {
   Stats,
 } from "./pages";
 
+import { HEADER_HEIGHT, PLAYBACK_HEIGHT } from "../config/config";
+import { useEffect, useState } from "react";
+import getAverageColor from "../utils/getAverageColor";
+
 const Container = styled.div`
-  height: 100%;
+  top: ${HEADER_HEIGHT}px;
+  height: calc(100vh - ${Math.abs(HEADER_HEIGHT + PLAYBACK_HEIGHT)}px);
   width: 100%;
-  top: 0;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
+
+  background: linear-gradient(
+    to bottom,
+    ${(props) => props.backgroundColor} 0%,
+    ${(props) => props.backgroundColor} 10%,
+    rgba(0, 0, 0, 0) 20%,
+    rgba(0, 0, 0, 0) 100%
+  );
 
   h1 {
     margin: 0px;
@@ -26,22 +40,37 @@ const Container = styled.div`
 
 const PageRendererContainerStyled = styled.div`
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
+
+  overscroll-behavior-y: contain;
+
   overflow-y: scroll;
 `;
 
 const PageRendererStyled = styled.div`
   width: calc(100% * 0.5);
-  height: 100%;
   color: white;
 `;
 
 function Core() {
   const { currentPage } = useStore().app;
+
+  const [backgroundColor, setBackgroundColor] = useState("black");
+
+  const updateBackgroundColor = async () => {
+    setBackgroundColor("black");
+    if (!currentPage?.data?.images?.[0]?.url) return;
+    const imgUrl = currentPage?.data.images?.[0]?.url;
+    getAverageColor(imgUrl).then((color) => {
+      setBackgroundColor(color);
+    });
+  };
+
+  useEffect(() => {
+    updateBackgroundColor();
+  }, [currentPage]);
 
   const pageRenderer = () => {
     const type = currentPage?.type;
@@ -58,7 +87,7 @@ function Core() {
   };
 
   return (
-    <Container>
+    <Container backgroundColor={backgroundColor}>
       <PageRendererContainerStyled>
         <PageRendererStyled>{pageRenderer()}</PageRendererStyled>
       </PageRendererContainerStyled>
