@@ -11,6 +11,7 @@ import {
   PRIMARY_TEXT_COLOR,
   SECONDARY_BACKGROUND_COLOR,
 } from "../config/config";
+import { createPortal } from "react-dom";
 
 const Container = styled.div`
   position: absolute;
@@ -170,7 +171,7 @@ function SideBar() {
     setCurrentPage(content);
   };
 
-  return (
+  return createPortal(
     <Container onMouseMove={handleMouseMove} sideBarState={sideBarState}>
       <LineStyled onPointerDown={handlePointerDownOnHome}>Home 🔎</LineStyled>
       <LineStyled onPointerDown={handlePointerDownOnSearch}>
@@ -190,7 +191,8 @@ function SideBar() {
           );
         })}
       </ContentContainer>
-    </Container>
+    </Container>,
+    document.body,
   );
 }
 

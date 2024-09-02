@@ -7,6 +7,12 @@ import Song from "../ui/Song";
 const DailyMixContainer = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 20px;
+`;
+
+const SongsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: 10px;
 `;
 
@@ -37,21 +43,16 @@ function DailyMix(props) {
   }, []);
 
   return (
-    <div>
+    <DailyMixContainer>
       <h1>Daily Mix</h1>
-      <DailyMixContainer>
+      <SongsContainer>
         {tracks.map((track) => (
           <DailyMixStyled key={track.id}>
-            {/* <Image src={track.album.images[0].url} />
-            <div>
-              <h3>{track.name}</h3>
-              <p>{track.artists.map((artist) => artist.name).join(", ")}</p>
-            </div> */}
             <Song track={track} />
           </DailyMixStyled>
         ))}
-      </DailyMixContainer>
-    </div>
+      </SongsContainer>
+    </DailyMixContainer>
   );
 }
 
