@@ -7,20 +7,48 @@ import sortBySimilarity from "../../utils/sortBySimilarity";
 const Container = styled.div`
   height: 100%;
   width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
-const TitleStyled = styled.div``;
+const TitleStyled = styled.div`
+  font-size: 20px;
+
+  display: flex;
+  gap: 20px;
+`;
 
 const SearchContainer = styled.div``;
 
 const InputStyled = styled.input``;
 
-const ResultList = styled.ul``;
+const ResultList = styled.div`
+  display: flex;
+  flex-direction: column;
 
-const ResultItem = styled.li`
-  cursor: pointer;
+  gap: 10px;
 `;
 
+const ResultItem = styled.div`
+  cursor: pointer;
+
+  border: 1px solid white;
+  border-radius: 5px;
+
+  width: 100%; /* Largeur fixe pour chaque enfant */
+  height: 50px; /* Hauteur fixe pour chaque enfant */
+  display: flex;
+  align-items: center; /* Centrer le contenu verticalement */
+  justify-content: center; /* Centrer le contenu horizontalement */
+
+  gap: 5px;
+`;
+const Image = styled.img`
+  width: 50px;
+  height: 50px;
+`;
 function Search() {
   const { spotifyLayer } = useStore();
   const { setCurrentPage } = useStore().app;
@@ -48,30 +76,43 @@ function Search() {
   }, [search]);
 
   const handleClickOnResultItem = (result) => {
+    if (result.type === "track") {
+      spotifyLayer.api.player.startResumePlayback(
+        spotifyLayer.deviceId,
+        undefined,
+        [result.uri],
+      );
+      return;
+    }
     setCurrentPage({ type: result.type, data: result });
   };
 
   return (
     <Container>
-      <TitleStyled>Search</TitleStyled>
-      <InputStyled
-        type="text"
-        placeholder="Search..."
-        onChange={(e) => setSearch(e.target.value)}
-        value={search}
-      />
+      <TitleStyled>
+        Search
+        <InputStyled
+          type="text"
+          placeholder="Search..."
+          onChange={(e) => setSearch(e.target.value)}
+          value={search}
+        />
+      </TitleStyled>
       {results.length > 0 && (
         <SearchContainer>
           <TitleStyled>Results:</TitleStyled>
           <ResultList>
-            {results.map((result) => (
-              <ResultItem
-                key={result.id}
-                onClick={() => handleClickOnResultItem(result)}
-              >
-                {result.type} - {result.name}
-              </ResultItem>
-            ))}
+            {results.map((result) => {
+              return (
+                <ResultItem
+                  key={result.id}
+                  onClick={() => handleClickOnResultItem(result)}
+                >
+                  {result.images && <Image src={result?.images[0]?.url} />}
+                  {result.type} - {result.name}
+                </ResultItem>
+              );
+            })}
           </ResultList>
         </SearchContainer>
       )}

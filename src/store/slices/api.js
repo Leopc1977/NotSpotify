@@ -5,6 +5,7 @@ class Api {
   likedTracks = [];
 
   constructor(store) {
+    this.store = store;
     makeAutoObservable(this, {}, { autoBind: true });
   }
 

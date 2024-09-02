@@ -2,9 +2,7 @@ import { makeAutoObservable } from "mobx";
 
 class App {
   currentPage = null;
-  isReady = false;
-  // closed, floating, fixed
-  sideBarState = "closed";
+  sideBarState = "closed"; // closed, floating, fixed
 
   constructor(store) {
     this.store = store;
@@ -15,10 +13,6 @@ class App {
   setCurrentPage = (page) => {
     this.currentPage = page;
   };
-
-  setIsReady(isReady) {
-    this.isReady = isReady;
-  }
 
   setSideBarState = (state) => {
     this.sideBarState = state;

@@ -27,8 +27,9 @@ const NotConnectedContainerStyled = styled.div`
 
 function AppSpotify() {
   const { setSpotifyLayer } = useStore();
-  const { setIsReady, isReady } = useStore().app;
   const { setState } = useStore().api;
+
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);

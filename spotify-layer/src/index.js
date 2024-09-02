@@ -8,7 +8,21 @@ import fetchToken from "./auth/fetchToken";
 /* API */
 import getMyLikedTracks from "./api/getMyLikedTracks";
 import getMyLibrary from "./api/getMyLibrary";
+import getRecentTracks from "./api/getRecentTracks";
+import getTopArtists from "./api/getTopArtists";
+import getDailyMix from "./api/getDailyMix";
 
 /* Export */
 export default SpotifyLayer;
-export { authenticateOAuth, fetchToken, getMyLikedTracks, getMyLibrary };
+
+export {
+  // Auth
+  authenticateOAuth,
+  fetchToken,
+  // API
+  getMyLikedTracks,
+  getMyLibrary,
+  getRecentTracks,
+  getTopArtists,
+  getDailyMix,
+};

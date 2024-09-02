@@ -16,6 +16,7 @@ const Container = styled.div`
   color: white;
   overscroll-behavior-y: contain;
   z-index: 1;
+  margin-bottom: 10px;
 `;
 
 const MenuStyled = styled.div`

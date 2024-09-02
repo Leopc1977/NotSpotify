@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { useStore } from "mobx-utils";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { SECONDARY_BACKGROUND_COLOR } from "../config/config";
 
@@ -12,21 +12,34 @@ const PlayBackStyled = styled.div`
 `;
 
 const Content = styled.div`
+  width: 100%;
+  height: 100%;
   display: flex;
-  justifycontent: space-between;
 `;
 
 const Player = styled.div`
   width: 50%;
   height: 100%;
-  justifycontent: center;
+`;
+
+const PlayingTrackContainer = styled.div`
+  width: fit-content;
+  height: fit-content;
+
+  display: flex;
+  align-items: center;
+
+  margin: 5px;
+  gap: 10px;
 `;
 
 const PlayingTrack = styled.div`
-  display: flex;
-  justifycontent: center;
-  alignitems: center;
-  height: 100%;
+  width: 90%;
+  height: fit-content;
+
+  overflow: hidden;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
 `;
 
 const Button = styled.button`
@@ -38,21 +51,38 @@ const Button = styled.button`
 `;
 
 const Controls = styled.div`
+  position: absolute;
   display: flex;
-  justifycontent: space-between;
-  width: 50%;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   height: 100%;
+`;
+
+const Image = styled.img`
+  width: 40px;
+  height: 40px;
+
+  border-radius: 3px;
 `;
 
 function PlayBack() {
   const { spotifyLayer } = useStore();
   const { state } = useStore().api;
 
+  /*
+    Premiere condition quand le lecteur est l'application
+    Deuxieme condition quand le lecteur est externe (?)
+  */
   const currentTrack = state?.track_window?.current_track?.name
     ? `${state.track_window.current_track.name} - ${state.track_window.current_track.artists[0].name}`
     : state?.item?.name
       ? `${state.item.name} - ${state.item.artists[0].name}`
       : "No track playing";
+
+  const currentTrackImageUri = state?.track_window?.current_track?.name
+    ? state?.track_window?.current_track?.album?.images[0].url
+    : state.item.album?.images[0].url;
 
   const handleClickOnPrevious = () => {
     spotifyLayer.player.previousTrack();
@@ -66,11 +96,16 @@ function PlayBack() {
     spotifyLayer.player.nextTrack();
   };
 
+  console.log(currentTrackImageUri);
+
   return (
     <PlayBackStyled>
       <Content>
         <Player>
-          <PlayingTrack>{currentTrack}</PlayingTrack>
+          <PlayingTrackContainer>
+            {currentTrackImageUri && <Image src={currentTrackImageUri} />}
+            <PlayingTrack>{currentTrack}</PlayingTrack>
+          </PlayingTrackContainer>
         </Player>
         <Controls>
           <Button onClick={handleClickOnPrevious}>Previous</Button>

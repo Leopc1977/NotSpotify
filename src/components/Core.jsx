@@ -14,6 +14,7 @@ import {
 import { HEADER_HEIGHT, PLAYBACK_HEIGHT } from "../config/config";
 import { useEffect, useState } from "react";
 import getAverageColor from "../utils/getAverageColor";
+import DailyMix from "./pages/DailyMix";
 
 const Container = styled.div`
   top: ${HEADER_HEIGHT}px;
@@ -23,7 +24,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
 
   background: linear-gradient(
     to bottom,
@@ -40,6 +40,7 @@ const Container = styled.div`
 
 const PageRendererContainerStyled = styled.div`
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -47,11 +48,17 @@ const PageRendererContainerStyled = styled.div`
   overscroll-behavior-y: contain;
 
   overflow-y: scroll;
+
+  border-radius: 10px;
+  overflow: hidden;s
 `;
 
 const PageRendererStyled = styled.div`
   width: calc(100% * 0.5);
+  height: 100%;
   color: white;
+
+  margin-top: 30px;
 `;
 
 function Core() {
@@ -60,7 +67,7 @@ function Core() {
   const [backgroundColor, setBackgroundColor] = useState("black");
 
   const updateBackgroundColor = async () => {
-    setBackgroundColor("black");
+    setBackgroundColor("#FFFFFF1F");
     if (!currentPage?.data?.images?.[0]?.url) return;
     const imgUrl = currentPage?.data.images?.[0]?.url;
     getAverageColor(imgUrl).then((color) => {
@@ -82,6 +89,7 @@ function Core() {
     if (type === "search") return <Search />;
     if (type === "settings") return <Settings />;
     if (type === "stats") return <Stats />;
+    if (type === "dailyMix") return <DailyMix />;
 
     return <Home />;
   };

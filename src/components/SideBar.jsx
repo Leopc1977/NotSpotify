@@ -3,7 +3,7 @@ import { useStore } from "mobx-utils";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { getMyLibrary } from "spotify-layer";
-import { createPortal } from "react-dom";
+
 import {
   HEADER_HEIGHT,
   HOVER_CONTENT_COLOR,
@@ -28,11 +28,11 @@ const Container = styled.div`
   overflow-y: scroll;
   overscroll-behavior-y: none;
 
-  border: 1px solid white;
   border-radius: ${(props) =>
     props.sideBarState === "floating" ? "10px" : "5px"};
   gap: 10px;
   background-color: ${SECONDARY_BACKGROUND_COLOR};
+  margin-left: 20px;
 `;
 
 const ContentContainer = styled.div`
@@ -73,12 +73,19 @@ const ContentRenderer = styled.div`
   overflow: hidden;
 `;
 
-const Line = styled.div`
+const LineStyled = styled.div`
   cursor: pointer;
+
+  margin: 5px;
+  font-size: 20px;
   border-bottom: 1px solid white;
 `;
 
-const LibraryTitle = styled.div``;
+const LibraryTitle = styled.div`
+  font-size: 20px;
+  margin: 5px;
+  cursor: default;
+`;
 
 const LibrarySong = styled.div``;
 
@@ -163,11 +170,13 @@ function SideBar() {
     setCurrentPage(content);
   };
 
-  return createPortal(
+  return (
     <Container onMouseMove={handleMouseMove} sideBarState={sideBarState}>
-      <Line onPointerDown={handlePointerDownOnHome}>Home 🔎</Line>
-      <Line onPointerDown={handlePointerDownOnSearch}>Search 🔎</Line>
-      <Line onPointerDown={handlePointerDownOnStats}>Stats 📊</Line>
+      <LineStyled onPointerDown={handlePointerDownOnHome}>Home 🔎</LineStyled>
+      <LineStyled onPointerDown={handlePointerDownOnSearch}>
+        Search 🔎
+      </LineStyled>
+      <LineStyled onPointerDown={handlePointerDownOnStats}>Stats 📊</LineStyled>
       <LibraryTitle>Your Library 📚</LibraryTitle>
       <ContentContainer>
         {[likedTracksContent, ...libraryContent].map((content) => {
@@ -181,8 +190,7 @@ function SideBar() {
           );
         })}
       </ContentContainer>
-    </Container>,
-    document.body,
+    </Container>
   );
 }
 
