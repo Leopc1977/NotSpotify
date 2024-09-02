@@ -5,10 +5,15 @@ const ContainerStyled = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+
   border: 1px solid white;
   border-radius: 5px;
   width: 100%;
+  height: 100%;
+
+  padding: 10px;
+  box-sizing: border-box;
+
   cursor: pointer;
 `;
 

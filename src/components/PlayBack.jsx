@@ -34,7 +34,7 @@ const PlayingTrackContainer = styled.div`
 `;
 
 const PlayingTrack = styled.div`
-  width: 90%;
+  width: 100%;
   height: fit-content;
 
   overflow: hidden;
@@ -82,7 +82,7 @@ function PlayBack() {
 
   const currentTrackImageUri = state?.track_window?.current_track?.name
     ? state?.track_window?.current_track?.album?.images[0].url
-    : state.item.album?.images[0].url;
+    : state?.item?.album?.images[0].url;
 
   const handleClickOnPrevious = () => {
     spotifyLayer.player.previousTrack();

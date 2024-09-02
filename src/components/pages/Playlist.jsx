@@ -7,13 +7,26 @@ import Song from "../ui/Song";
 import PlaylistHeader from "../ui/PlaylistHeader";
 
 const Container = styled.div`
-  height: 100%;
+  height: calc(100% - 50px);
   width: 100%;
+
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-right: 15px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
-const TitleStyled = styled.div``;
+const PlaylistList = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
-const PlaylistList = styled.ul``;
+const SongItem = styled.div``;
 
 function Playlist() {
   const { spotifyLayer } = useStore();
@@ -23,21 +36,26 @@ function Playlist() {
   const [playlistTracks, setPlaylistTracks] = useState([]);
 
   const getPlaylistTracks = useCallback(async () => {
-    //TODO put a condition to check if the playlist is liked tracks changed and refresh the liked tracks
-    const playlistId = currentPage.data.id;
+    try {
+      const playlistId = currentPage.data.id;
 
-    if (playlistId === "liked-tracks") {
-      setPlaylistTracks(likedTracks);
-    } else {
-      const tracks =
-        await spotifyLayer.api.playlists.getPlaylistItems(playlistId);
-      setPlaylistTracks(tracks.items);
+      if (playlistId === "liked-tracks") {
+        setPlaylistTracks(likedTracks);
+      } else {
+        const tracks =
+          await spotifyLayer.api.playlists.getPlaylistItems(playlistId);
+        setPlaylistTracks(tracks.items);
+      }
+    } catch (error) {
+      console.error("Failed to fetch playlist tracks", error);
     }
-  }, []);
+  }, [likedTracks, spotifyLayer.api.playlists, currentPage.data.id]);
 
   useEffect(() => {
-    getPlaylistTracks();
-  }, [currentPage.data.id]);
+    if (currentPage.data.id !== "liked-tracks" || likedTracks.length === 0) {
+      getPlaylistTracks();
+    }
+  }, [currentPage.data.id, likedTracks.length, getPlaylistTracks]);
 
   const handleClickOnSong = (track) => {
     spotifyLayer.api.player.startResumePlayback(
@@ -50,18 +68,19 @@ function Playlist() {
   return (
     <Container>
       <PlaylistHeader playlist={currentPage.data} />
-      <TitleStyled>Tracks:</TitleStyled>
       <PlaylistList>
         {(currentPage.data.id === "liked-tracks"
           ? likedTracks
           : playlistTracks
         ).map((track) => {
           return (
-            <Song
-              key={`${currentPage.data.id}-${track.track.id}-${track.added_at}`}
-              onClick={() => handleClickOnSong(track.track)}
-              track={track.track}
-            />
+            <SongItem>
+              <Song
+                key={track.track.id}
+                onClick={() => handleClickOnSong(track.track)}
+                track={track.track}
+              />
+            </SongItem>
           );
         })}
       </PlaylistList>

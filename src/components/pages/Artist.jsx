@@ -11,8 +11,6 @@ const Container = styled.div`
   width: 100%;
 `;
 
-const TitleStyled = styled.div``;
-
 const TracksList = styled.ul``;
 
 function Artist() {
@@ -43,7 +41,6 @@ function Artist() {
   return (
     <Container>
       <ArtistHeader artist={currentPage.data} />
-      <TitleStyled>Top Tracks:</TitleStyled>
       <TracksList>
         {artistTracks.map((track) => {
           return (

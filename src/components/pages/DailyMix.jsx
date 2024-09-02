@@ -8,6 +8,19 @@ const DailyMixContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  height: calc(100% - 50px);
+  width: 100%;
+
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-right: 15px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const SongsContainer = styled.div`

@@ -5,11 +5,19 @@ import Song from "../ui/Song";
 import AlbumHeader from "../ui/AlbumHeader";
 
 const Container = styled.div`
-  height: 100%;
+  height: calc(100% - 50px);
   width: 100%;
-`;
 
-const TitleStyled = styled.div``;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-right: 15px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
 
 const SongList = styled.ul``;
 
@@ -36,7 +44,6 @@ function Album() {
   return (
     <Container>
       <AlbumHeader album={currentPage.data} />
-      <TitleStyled>Tracks:</TitleStyled>
       <SongList>
         {currentPage.data.tracks.items.map((track) => (
           <Song key={track.id} track={track} />

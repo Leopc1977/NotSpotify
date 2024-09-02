@@ -93,6 +93,7 @@ const LibrarySong = styled.div``;
 const Image = styled.img`
   width: 50px;
   height: 50px;
+  border-radius: 5px;
 `;
 
 const ContentName = styled.div`
@@ -113,6 +114,7 @@ function SideBar() {
       owner: { display_name: "You" },
       description: "Liked tracks",
       images: [{ url: "" }],
+      name: "Liked Tracks",
     },
   };
 
@@ -173,7 +175,7 @@ function SideBar() {
 
   return createPortal(
     <Container onMouseMove={handleMouseMove} sideBarState={sideBarState}>
-      <LineStyled onPointerDown={handlePointerDownOnHome}>Home 🔎</LineStyled>
+      <LineStyled onPointerDown={handlePointerDownOnHome}>Home 🏠</LineStyled>
       <LineStyled onPointerDown={handlePointerDownOnSearch}>
         Search 🔎
       </LineStyled>

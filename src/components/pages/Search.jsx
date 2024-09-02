@@ -5,12 +5,22 @@ import styled from "styled-components";
 import sortBySimilarity from "../../utils/sortBySimilarity";
 
 const Container = styled.div`
-  height: 100%;
+  height: calc(100% - 50px);
   width: 100%;
 
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-right: 15px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const TitleStyled = styled.div`
