@@ -72,6 +72,7 @@ const ContentRenderer = styled.div`
   height: 35px;
   border-radius: 5px;
   overflow: hidden;
+  gap: 10px;
 `;
 
 const LineStyled = styled.div`
@@ -96,9 +97,18 @@ const Image = styled.img`
   border-radius: 5px;
 `;
 
+const ContentNameContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 const ContentName = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
+`;
+
+const ContentSubTitle = styled.div`
+  font-size: 15px;
 `;
 
 function SideBar() {
@@ -148,7 +158,10 @@ function SideBar() {
     return (
       <ContentRenderer>
         {imageUrl && <Image src={imageUrl} alt={name} />}
-        <ContentName>{name}</ContentName>
+        <ContentNameContainer>
+          <ContentName>{name}</ContentName>
+          <ContentSubTitle>{caption}</ContentSubTitle>
+        </ContentNameContainer>
       </ContentRenderer>
     );
   };
