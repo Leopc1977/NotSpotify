@@ -1,4 +1,8 @@
 import { SpotifyApi } from "@spotify/web-api-ts-sdk";
+import fetchUserData from './utils/fetchUserData'
+import createFirebaseUser from './utils/createFirebaseUser'
+
+import { getAuth, signInWithCustomToken } from "firebase/auth";
 
 class SpotifyLayer {
   sdkConfig;
@@ -82,30 +86,59 @@ class SpotifyLayer {
     console.log("Player initialized");
   }
 
-  async initializeApi(data) {
-    return new Promise((resolve, reject) => {
+async initializeApi(data) {
+  return new Promise(async (resolve, reject) => {
+    try {
       if (data.accessToken && data.clientId) {
+        // Initialisation de l'API Spotify avec un access token
         this.api = SpotifyApi.withAccessToken(data.clientId, {
           access_token: data.accessToken,
           token_type: data.tokenType,
           expires_in: data.expiresIn,
           refresh_token: data.refreshToken,
         });
-        console.log("API initialized with access token");
+
+        // Étape 2 : Récupérer les informations utilisateur Spotify
+        const user = await fetchUserData(data.accessToken);
+        this.user = user; // Stockez l'utilisateur pour un usage ultérieur
+        console.log("Utilisateur Spotify :", this.user);
+
+        // Étape 3 : Obtenir un jeton Firebase personnalisé depuis le serveur
+        const customTokenResponse = await createFirebaseUser(this.user);
+
+        if (!customTokenResponse.ok) {
+          throw new Error("Erreur lors de la génération du jeton Firebase");
+        }
+
+        const { customToken } = await customTokenResponse.json();
+
+        // Étape 4 : Connecter l'utilisateur à Firebase
+        const auth = getAuth(firebaseApp);
+        const userCredential = await signInWithCustomToken(auth, customToken);
+
+        console.log("Utilisateur connecté à Firebase :", userCredential.user);
+
+        console.log("API Spotify initialisée avec access token");
         resolve();
       } else if (data.clientId && data.clientSecret) {
+        // Initialisation de l'API Spotify avec client credentials
         this.api = SpotifyApi.withClientCredentials(
           data.clientId,
           data.clientSecret,
         );
-        console.log("API initialized with client credentials");
+        console.log("API Spotify initialisée avec client credentials");
         resolve();
       } else {
-        console.error("No credentials provided to use Spotify API");
-        reject(new Error("No credentials provided to use Spotify API"));
+        console.error("Aucune donnée d'authentification fournie pour Spotify API");
+        reject(new Error("Aucune donnée d'authentification fournie pour Spotify API"));
       }
-    });
-  }
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation de l'API Spotify :", error);
+      reject(error);
+    }
+  });
+}
+
 }
 
 export default SpotifyLayer;

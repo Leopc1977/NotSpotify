@@ -4,7 +4,24 @@ import svgr from "vite-plugin-svgr";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [svgr(), react()],
+  build: {
+    rollupOptions: {
+      external: ['firebase-admin'],
+    },
+  },
+  plugins: [
+    svgr(),
+    react({
+      babel: {
+        plugins: [
+          [
+            "babel-plugin-styled-components",
+            { displayName: true, fileName: true },
+          ],
+        ],
+      },
+    }),
+  ],
   server: {
     port: 3000,
     strictPort: true,

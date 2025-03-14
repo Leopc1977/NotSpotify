@@ -10,3 +10,4 @@ export const SUB_TEXT_COLOR = "#a7a7a7";
 
 export const HOVER_CONTENT_COLOR = "#1a1a1a";
 export const SELECTED_CONTENT_COLOR = "hsla(0,0%,100%,.07)";
+export const SELECTED_AND_HOVER_CONTENT_COLOR = "#484747";

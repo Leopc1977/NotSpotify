@@ -11,7 +11,11 @@ const Container = styled.div`
   width: 100%;
 `;
 
-const TracksList = styled.ul``;
+const TracksList = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
 
 function Artist() {
   const { currentPage } = useStore().app;

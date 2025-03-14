@@ -11,7 +11,11 @@ import {
   Stats,
 } from "./pages";
 
-import { HEADER_HEIGHT, PLAYBACK_HEIGHT } from "../config/config";
+import {
+  HEADER_HEIGHT,
+  PLAYBACK_HEIGHT,
+  SECONDARY_BACKGROUND_COLOR,
+} from "../config/config";
 import { useEffect, useState } from "react";
 import getAverageColor from "../utils/getAverageColor";
 import DailyMix from "./pages/DailyMix";
@@ -25,13 +29,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
 
-  background: linear-gradient(
-    to bottom,
-    ${(props) => props.backgroundColor} 0%,
-    ${(props) => props.backgroundColor} 10%,
-    rgba(0, 0, 0, 0) 20%,
-    rgba(0, 0, 0, 0) 100%
-  );
+  background: black;
 
   h1 {
     margin: 0px;
@@ -50,7 +48,7 @@ const PageRendererContainerStyled = styled.div`
   overflow-y: scroll;
 
   border-radius: 10px;
-  overflow: hidden;s
+  overflow: hidden;
 `;
 
 const PageRendererStyled = styled.div`
@@ -58,7 +56,25 @@ const PageRendererStyled = styled.div`
   height: 100%;
   color: white;
 
-  margin-top: 30px;
+  background: linear-gradient(
+    to bottom,
+    ${(props) => props.backgroundColor} 30%,
+    rgba(0, 0, 0, 0.6) 60%
+  );
+
+  border-radius: 5px;
+  padding: 10px;
+  padding-top: 20px;
+
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-right: 15px;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 function Core() {
@@ -95,9 +111,11 @@ function Core() {
   };
 
   return (
-    <Container backgroundColor={backgroundColor}>
+    <Container>
       <PageRendererContainerStyled>
-        <PageRendererStyled>{pageRenderer()}</PageRendererStyled>
+        <PageRendererStyled backgroundColor={backgroundColor}>
+          {pageRenderer()}
+        </PageRendererStyled>
       </PageRendererContainerStyled>
     </Container>
   );

@@ -32,7 +32,7 @@ function Header(props) {
 
   return (
     <ContainerStyled>
-      <ImageStyled src={imageUrl} />
+      {imageUrl && <ImageStyled src={imageUrl} />}
       <ContentContainer>
         <TitleStyled>{title}</TitleStyled>
         <SubTitle>{subTitle}</SubTitle>

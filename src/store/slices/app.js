@@ -1,19 +1,18 @@
 import { makeAutoObservable } from "mobx";
 
 class App {
-  currentPage = null;
-  sideBarState = "closed"; // closed, floating, fixed
-
   constructor(store) {
     this.store = store;
 
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
+  currentPage = null;
   setCurrentPage = (page) => {
     this.currentPage = page;
   };
 
+  sideBarState = "fixed"; // closed, floating, fixed
   setSideBarState = (state) => {
     this.sideBarState = state;
   };

@@ -11,16 +11,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-
-  overflow-y: auto;
-  box-sizing: border-box;
-  padding-right: 15px;
-
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
 `;
 
 const TitleStyled = styled.div`

@@ -29,13 +29,18 @@ function getMyLibrary(api) {
     // Récupérer les playlists
     const playlistsPromise = api.currentUser.playlists
       .playlists()
-      .then((playlistsResponse) => {
-        return playlistsResponse.items.map((playlist) => ({
-          type: "playlist",
-          name: playlist.name,
-          popularity: playlist.popularity,
-          data: playlist,
-        }));
+      .then((playlistsResponse) =>
+        playlistsResponse.items.filter((item) => item !== null),
+      )
+      .then((playlists) => {
+        return playlists.map((playlist) => {
+          return {
+            type: "playlist",
+            name: playlist.name,
+            popularity: playlist.popularity,
+            data: playlist,
+          };
+        });
       });
 
     // Attendre que toutes les promesses soient résolues

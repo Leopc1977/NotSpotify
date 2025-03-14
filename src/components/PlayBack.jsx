@@ -96,8 +96,6 @@ function PlayBack() {
     spotifyLayer.player.nextTrack();
   };
 
-  console.log(currentTrackImageUri);
-
   return (
     <PlayBackStyled>
       <Content>

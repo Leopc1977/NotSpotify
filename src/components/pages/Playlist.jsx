@@ -1,4 +1,3 @@
-import { toJS } from "mobx";
 import { observer } from "mobx-react-lite";
 import { useStore } from "mobx-utils";
 import { useCallback, useEffect, useState } from "react";
@@ -9,16 +8,6 @@ import PlaylistHeader from "../ui/PlaylistHeader";
 const Container = styled.div`
   height: calc(100% - 50px);
   width: 100%;
-
-  overflow-y: auto;
-  box-sizing: border-box;
-  padding-right: 15px;
-
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
 `;
 
 const PlaylistList = styled.div`
@@ -74,9 +63,8 @@ function Playlist() {
           : playlistTracks
         ).map((track) => {
           return (
-            <SongItem>
+            <SongItem key={track.track.id}>
               <Song
-                key={track.track.id}
                 onClick={() => handleClickOnSong(track.track)}
                 track={track.track}
               />

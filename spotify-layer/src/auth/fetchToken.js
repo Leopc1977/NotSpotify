@@ -1,5 +1,12 @@
 //TODO: use spotify-web-api-js to fetch token
 
+// Vérifier si le service worker est disponible dans le navigateur
+const isLocalhost = Boolean(
+    window.location.hostname === 'localhost' 
+        || window.location.hostname === '[::1]'
+        || window.location.hostname === '127.0.0.1'
+);
+
 function fetchToken(code, data) {
   const params = new URLSearchParams();
   params.append("grant_type", "authorization_code");
@@ -16,7 +23,11 @@ function fetchToken(code, data) {
   })
     .then((response) => response.json())
     .then((json) => {
-      window.location.href = `http://localhost:3000?access_token=${json.access_token}&refresh_token=${json.refresh_token}&token_type=${json.token_type}&expires_in=${json.expires_in}&scope=${json.scope}`;
+      if (isLocalhost) {
+        window.location.href = `http://localhost:3000?access_token=${json.access_token}&refresh_token=${json.refresh_token}&token_type=${json.token_type}&expires_in=${json.expires_in}&scope=${json.scope}`;
+      } else {
+        window.location.href = `https://not-spotify-d9c10.web.app?access_token=${json.access_token}&refresh_token=${json.refresh_token}&token_type=${json.token_type}&expires_in=${json.expires_in}&scope=${json.scope}`;
+      }
     });
 }
 

@@ -10,8 +10,11 @@ import {
   PLAYBACK_HEIGHT,
   PRIMARY_TEXT_COLOR,
   SECONDARY_BACKGROUND_COLOR,
+  SELECTED_AND_HOVER_CONTENT_COLOR,
+  SELECTED_CONTENT_COLOR,
 } from "../config/config";
 import { createPortal } from "react-dom";
+import { toJS } from "mobx";
 
 const Container = styled.div`
   position: absolute;
@@ -23,7 +26,7 @@ const Container = styled.div`
   top: ${HEADER_HEIGHT}px;
   color: ${PRIMARY_TEXT_COLOR};
 
-  width: 20%;
+  width: 24%;
   height: calc(100vh - ${HEADER_HEIGHT + PLAYBACK_HEIGHT + 2}px);
   overflow: hidden;
   overflow-y: scroll;
@@ -33,7 +36,6 @@ const Container = styled.div`
     props.sideBarState === "floating" ? "10px" : "5px"};
   gap: 10px;
   background-color: ${SECONDARY_BACKGROUND_COLOR};
-  margin-left: 20px;
 `;
 
 const ContentContainer = styled.div`
@@ -41,7 +43,6 @@ const ContentContainer = styled.div`
 
   display: flex;
   flex-direction: column;
-  gap: 10px;
   padding: 10px;
 
   h2 {
@@ -58,7 +59,6 @@ const ContentContainer = styled.div`
   }
 
   div:hover {
-    background-color: ${HOVER_CONTENT_COLOR};
     border-radius: 5px;
   }
 `;
@@ -80,16 +80,25 @@ const LineStyled = styled.div`
 
   margin: 5px;
   font-size: 20px;
-  border-bottom: 1px solid white;
 `;
 
 const LibraryTitle = styled.div`
   font-size: 20px;
-  margin: 5px;
+  margin-left: 5px;
   cursor: default;
 `;
 
-const LibrarySong = styled.div``;
+const LibrarySong = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: ${(props) =>
+    props.active ? SELECTED_CONTENT_COLOR : "none"};
+
+  &:hover {
+    background: ${(props) =>
+      props.active ? SELECTED_AND_HOVER_CONTENT_COLOR : HOVER_CONTENT_COLOR};
+  }
+`;
 
 const Image = styled.img`
   width: 50px;
@@ -113,7 +122,7 @@ const ContentSubTitle = styled.div`
 
 function SideBar() {
   const { spotifyLayer } = useStore();
-  const { setCurrentPage, sideBarState } = useStore().app;
+  const { setCurrentPage, sideBarState, currentPage } = useStore().app;
   const [libraryContent, setLibraryContent] = useState([]);
 
   const likedTracksContent = {
@@ -155,8 +164,10 @@ function SideBar() {
       caption = "Playlist";
     }
 
+    const launchContent = () => {};
+
     return (
-      <ContentRenderer>
+      <ContentRenderer onDoubleClick={launchContent}>
         {imageUrl && <Image src={imageUrl} alt={name} />}
         <ContentNameContainer>
           <ContentName>{name}</ContentName>
@@ -168,10 +179,6 @@ function SideBar() {
 
   const handleMouseMove = (e) => {
     e.stopPropagation();
-  };
-
-  const handlePointerDownOnHome = () => {
-    setCurrentPage({ type: "home", data: {} });
   };
 
   const handlePointerDownOnSearch = () => {
@@ -188,18 +195,19 @@ function SideBar() {
 
   return createPortal(
     <Container onMouseMove={handleMouseMove} sideBarState={sideBarState}>
-      <LineStyled onPointerDown={handlePointerDownOnHome}>Home 🏠</LineStyled>
       <LineStyled onPointerDown={handlePointerDownOnSearch}>
         Search 🔎
       </LineStyled>
       <LineStyled onPointerDown={handlePointerDownOnStats}>Stats 📊</LineStyled>
-      <LibraryTitle>Your Library 📚</LibraryTitle>
+      <LibraryTitle>Your Library 📚 +</LibraryTitle>
       <ContentContainer>
         {[likedTracksContent, ...libraryContent].map((content) => {
+          const key = `Sidebar-${content.data.id}`;
           return (
             <LibrarySong
-              key={`Sidebar-${content.data.id}`}
+              key={key}
               onPointerDown={() => handlePointerDownOnLibraryTrack(content)}
+              active={content.data.id === currentPage?.data?.id}
             >
               {contentRenderer(content)}
             </LibrarySong>
