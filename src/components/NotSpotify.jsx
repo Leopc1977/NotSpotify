@@ -10,7 +10,6 @@ import { getMyLikedTracks } from "spotify-layer";
 import {
   PLAYBACK_HEIGHT,
   PRIMARY_BACKGROUND_COLOR,
-  SECONDARY_BACKGROUND_COLOR,
 } from "../config/config";
 
 const ContainerStyled = styled.div`
