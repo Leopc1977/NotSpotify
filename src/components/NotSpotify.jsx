@@ -7,10 +7,7 @@ import PlayBack from "./PlayBack";
 import { useStore } from "mobx-utils";
 import Header from "./Header";
 import { getMyLikedTracks } from "spotify-layer";
-import {
-  PLAYBACK_HEIGHT,
-  PRIMARY_BACKGROUND_COLOR,
-} from "../config/config";
+import { PLAYBACK_HEIGHT, PRIMARY_BACKGROUND_COLOR } from "../config/config";
 
 const ContainerStyled = styled.div`
   height: 100vh;
